@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -197,6 +198,7 @@
         .session-row span { min-width: 40px; font-size: 0.85rem; color: var(--text-muted); }
         .session-row input { flex: 1; padding: 8px; font-size: 0.85rem; }
 
+        /* 모눈종이 노트 스타일 고정 및 공간 확보 */
         .grid-textarea {
             background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
             background-size: 24px 24px;
@@ -207,8 +209,11 @@
             font-size: 0.95rem !important;
             resize: none;
             background-attachment: local;
+            flex: 1; /* 모달 내부에서 남은 공간을 꽉 채우도록 설정 */
+            margin-bottom: 12px;
         }
 
+        /* 피드백 작성 전체화면 모달창 배치 개선 */
         .comment-modal {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background-color: var(--bg-color); z-index: 2000;
@@ -217,6 +222,16 @@
         .comment-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .modal-info-preview { background-color: #111827; border: 1px dashed var(--border); border-radius: 8px; padding: 10px; margin-bottom: 14px; font-size: 0.85rem; color: var(--text-muted); }
         
+        /* 모달 내 하단 버튼 전용 스타일 고정 */
+        .modal-footer-btn {
+            flex: none !important; /* 무조건 한 줄 크기 고정 */
+            width: 100% !important;
+            height: 50px !important;
+            font-size: 1rem !important;
+            padding: 12px !important;
+            border-radius: 25px !important;
+        }
+
         .hidden { display: none !important; }
         .close-modal-btn { background: none !important; color: var(--text-muted) !important; width: auto !important; font-size: 1.2rem; padding: 4px 8px; }
     </style></head><body>
@@ -300,11 +315,13 @@
         </form>
     </div>
 
+    <!-- 피드백 작성 모달 영역 내부 레이아웃 전면 수정 -->
     <div id="comment-modal-window" class="comment-modal hidden">
         <div class="comment-modal-header"><h2 id="comment-modal-title">피드백 작성</h2><button class="close-modal-btn" onclick="closeCommentModal()">✕</button></div>
         <div class="modal-info-preview" id="modal-info-preview-box"></div>
-        <textarea id="form-comment" class="grid-textarea"></textarea>
-        <button type="button" class="btn-success" onclick="closeCommentModal()">작성 완료</button>
+        <textarea id="form-comment" class="grid-textarea" placeholder="여기에 세션 피드백을 기록하세요..."></textarea>
+        <!-- 기존 무조건 100% 늘어나던 구조에서 고정 크기를 갖도록 .modal-footer-btn 적용 -->
+        <button type="button" class="btn-success modal-footer-btn" onclick="closeCommentModal()">작성 완료</button>
     </div>
 
     <script>
@@ -442,7 +459,6 @@
             
             const log = db[idx];
             
-            // 기존 누락되었던 텍스트 필드 데이터 복원 로직 전체 완비
             document.getElementById('form-title-input').value = log.title || ''; 
             document.getElementById('form-date-input').value = log.date || '';
             document.getElementById('form-session-no').value = log.sessionNo || '';
@@ -453,7 +469,6 @@
             document.getElementById('warmup-type').value = log.warmupType || '';
             document.getElementById('main-type').value = log.mainType || '';
 
-            // 장비 체크박스 상태 복원
             if (log.equipment) {
                 document.getElementById('eq-mask').checked = !!log.equipment.mask;
                 document.getElementById('eq-snorkel').checked = !!log.equipment.snorkel;
@@ -467,7 +482,6 @@
                 document.getElementById('eq-etc').value = log.equipment.etc || '';
             }
 
-            // 목적 체크박스 상태 복원
             if (log.purpose) {
                 document.getElementById('p-sta').checked = !!log.purpose.sta;
                 document.getElementById('p-dyn').checked = !!log.purpose.dyn;
@@ -477,7 +491,6 @@
                 document.getElementById('p-fim').checked = !!log.purpose.fim;
             }
 
-            // 인풋 필드 초기화 후 수심 및 횟수 데이터 완벽 동기화 복원
             initFormFields();
             if (log.warmups) {
                 log.warmups.forEach((w, i) => {
@@ -529,13 +542,10 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     if (Array.isArray(importedData)) {
-                        // 사용자 선택권 부여: 덮어쓸지, 누적해서 합칠지 결정하여 유실 방지
                         const mode = confirm("기존 기록을 유지하면서 추가하시려면 [확인]을, 기존 기록을 완전히 지우고 파일 데이터로 바꾸시려면 [취소]를 누르세요.");
                         if (mode) {
-                            // 누적 병합
                             db = db.concat(importedData);
                         } else {
-                            // 완전히 대체
                             db = importedData;
                         }
                         localStorage.setItem('freediving_db', JSON.stringify(db));
@@ -548,7 +558,7 @@
                     alert("파일을 읽는 중 오류가 발생했습니다. 올바른 json 백업본인지 확인해 주세요.");
                     console.error(error);
                 }
-                event.target.value = ''; // 동일 파일 재선택 가능하도록 초기화
+                event.target.value = '';
             };
             reader.readAsText(file);
         }
