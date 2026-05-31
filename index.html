@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> Freediving Logbook</title>
+    <title>Freediving Logbook</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -64,8 +64,10 @@
             color: var(--primary);
         }
 
-        /* 대시보드 버튼 스타일 */
         .db-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             font-size: 0.9rem;
             margin-bottom: 12px;
         }
@@ -105,7 +107,6 @@
             position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;
         }
 
-        /* 로그 목록 스타일 */
         .log-item {
             padding: 12px;
             border-radius: 8px;
@@ -122,9 +123,9 @@
         .log-actions { display: flex; gap: 6px; }
         .log-actions button { padding: 6px 10px; min-width: auto; font-size: 0.75rem; }
 
-        /* 폼 스타일 */
         .form-group {
             margin-bottom: 12px;
+            width: 100%;
         }
         .form-group label {
             display: block;
@@ -132,8 +133,12 @@
             color: var(--text-muted);
             margin-bottom: 4px;
         }
-        input[type="text"], input[type="date"], input[type="number"], textarea {
-            width: 100%;
+        
+        /* 💡 모든 모바일 디바이스에서 인풋창 가로 폭이 튀어나오지 않도록 일괄 수정 */
+        input[type="text"], input[type="date"], input[type="number"], textarea, input {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            max-width: 100% !important;
             padding: 10px;
             border-radius: 6px;
             border: 1px solid var(--border);
@@ -142,7 +147,6 @@
             font-size: 0.9rem;
         }
 
-        /* 체크박스 그룹 격자 */
         .checkbox-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -165,7 +169,6 @@
             height: 16px;
         }
 
-        /* 수심/시간 기록 세션 테이블 대용 구조 */
         .session-row {
             display: flex;
             gap: 6px;
@@ -175,7 +178,6 @@
         .session-row span { min-width: 40px; font-size: 0.85rem; color: var(--text-muted); }
         .session-row input { flex: 1; padding: 8px; font-size: 0.85rem; }
 
-        /* 코멘트 모눈종이 스타일 효과 */
         .grid-textarea {
             background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
             background-size: 20px 20px;
@@ -191,11 +193,10 @@
 <body>
 
     <header>
-        <h1> Free Diving Logbook 🤿</h1>
+        <h1>Free Diving Logbook 🤿</h1>
         <p>스마트 다이빙 로그</p>
     </header>
 
-    <!-- 1. 대시보드 카드 -->
     <div class="card">
         <h2>다이빙 대시보드</h2>
         <div class="db-grid">
@@ -212,15 +213,12 @@
         </div>
     </div>
 
-    <!-- 2. 로그 리스트 카드 -->
     <div class="card" id="log-list-card">
         <h2>로그 데이터베이스</h2>
         <div id="log-list-container">
-            <!-- 데이터가 동적으로 추가됨 -->
-        </div>
+            </div>
     </div>
 
-    <!-- 3. 작성 및 수정 폼 카드 (기본 숨김) -->
     <div class="card hidden" id="log-form-card">
         <h2 id="form-title">새 다이빙 기록 작성</h2>
         <form id="dive-form" onsubmit="saveLog(event)">
@@ -232,7 +230,7 @@
             </div>
             <div class="form-group">
                 <label>날짜</label>
-                <input type="date" id="form-date" required>
+                <input type="date" id="form-date-input" required>
             </div>
             <div class="form-group">
                 <label>세션 No.</label>
@@ -244,15 +242,14 @@
             </div>
             <div class="form-group">
                 <label>다이브 버디 (Buddy)</label>
-                <input type="text" id="form-buddy">
+                <input type="text" id="form-buddy" placeholder="버디 이름을 입력하세요">
             </div>
             <div class="form-group">
                 <label>담당 강사 (Instructor)</label>
-                <input type="text" id="instructor" placeholder="강사 이름을 입력하세요">
+                <input type="text" id="form-instructor" placeholder="강사 이름을 입력하세요">
             </div>
             <hr style="border-color:var(--border); margin:16px 0;">
 
-            <!-- 장비 체크 -->
             <div class="form-group">
                 <label>EQUIPMENT CHECK (장비)</label>
                 <div class="checkbox-grid">
@@ -267,12 +264,11 @@
                     <input type="text" id="eq-wetsuit" placeholder="슈트 두께 (mm)" style="flex:1;">
                     <input type="text" id="eq-weight" placeholder="웨이트 (Neck/Belt kg)" style="flex:1;">
                 </div>
-                <div class="form-group" style="margin-top: 15px;">
-                    <label>기타 장비 (etc)</label>
-                    <input type="text" id="eq-etc" placeholder="추가 장비를 자유롭게 적어주세요 (예: 고프로, 다이브컴퓨터)">
+                <div style="margin-top: 10px;">
+                    <input type="text" id="eq-etc" placeholder="기타 장비 (etc) - 자유롭게 적어주세요">
+                </div>
             </div>
 
-            <!-- 환경 상태 -->
             <div class="form-group">
                 <label>CONDITIONS (환경)</label>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
@@ -285,7 +281,6 @@
                 </div>
             </div>
 
-            <!-- 다이빙 목적 -->
             <div class="form-group">
                 <label>PURPOSE (목적 및 종목)</label>
                 <div class="checkbox-grid">
@@ -300,30 +295,28 @@
 
             <hr style="border-color:var(--border); margin:16px 0;">
 
-            <!-- 세션 다이브 로그 (기록지) -->
             <div class="form-group">
                 <label>SESSION DIVE LOG (웜업 3회)</label>
                 <input type="text" id="warmup-type" placeholder="종목을 넣어주세요 (예: STA, DYN)">
                 
-                <div style="height: 20px;"></div>
+                <div style="height: 15px;"></div>
                 
                 <div id="warmup-inputs">
-                    <!-- 3회 고정 생성 -->
-                </div>
+                    </div>
             </div>
 
-            <div class="form-group" style="margin-top: 35px;">
+            <div style="height: 40px;"></div>
+
+            <div class="form-group">
                 <label>SESSION DIVE LOG (본 다이빙 최대 8회)</label>
-                <input type="text" id="종목" placeholder="종목을 넣어주세요">
+                <input type="text" id="main-type" placeholder="종목을 넣어주세요 (예: CWT, FIM)">
                 
-                <div style="height: 20px;"></div>
+                <div style="height: 15px;"></div>
                 
                 <div id="main-inputs" style="max-height: 260px; overflow-y: auto; padding-right:4px;">
-                    <!-- 8회 고정 생성 -->
-                </div>
+                    </div>
             </div>
 
-            <!-- 코멘트 모눈종이 스타일 -->
             <div class="form-group">
                 <label>COMMENT (종합 피드백 모눈)</label>
                 <textarea id="form-comment" rows="6" class="grid-textarea" placeholder="이퀄라이징 컨디션이나 자세 교정 내용을 적어보세요..."></textarea>
@@ -389,7 +382,6 @@
             }
 
             db.forEach((log, index) => {
-                // 선택된 종목 태그 문자열 만들기
                 let tags = [];
                 if(log.purpose) { for(let key in log.purpose) { if(log.purpose[key]) tags.push(key.toUpperCase()); } }
                 
@@ -416,7 +408,7 @@
             document.getElementById('form-title').innerText = '새 다이빙 기록 작성';
             
             // 오늘 날짜 기본 지정
-            document.getElementById('form-date').value = new Date().toISOString().substring(0, 10);
+            document.getElementById('form-date-input').value = new Date().toISOString().substring(0, 10);
             
             document.getElementById('log-form-card').classList.remove('hidden');
             document.getElementById('log-list-card').classList.add('hidden');
@@ -432,13 +424,14 @@
             e.preventDefault();
             const index = document.getElementById('edit-index').value;
 
-            // 데이터 수집 객체 빌드
+            // 데이터 수집 객체 빌드 (새 항목인 instructor 및 eqEtc 자바스크립트 매핑 완료)
             const logData = {
                 title: document.getElementById('form-title-input').value,
-                date: document.getElementById('form-date').value,
+                date: document.getElementById('form-date-input').value,
                 sessionNo: document.getElementById('form-session-no').value,
                 location: document.getElementById('form-location').value,
                 buddy: document.getElementById('form-buddy').value,
+                instructor: document.getElementById('form-instructor').value,
                 equipment: {
                     mask: document.getElementById('eq-mask').checked,
                     snorkel: document.getElementById('eq-snorkel').checked,
@@ -447,7 +440,8 @@
                     socks: document.getElementById('eq-socks').checked,
                     lanyard: document.getElementById('eq-lanyard').checked,
                     wetsuit: document.getElementById('eq-wetsuit').value,
-                    weight: document.getElementById('eq-weight').value
+                    weight: document.getElementById('eq-weight').value,
+                    etc: document.getElementById('eq-etc').value
                 },
                 conditions: {
                     weather: document.getElementById('cond-weather').value,
@@ -463,19 +457,19 @@
                     cnf: document.getElementById('p-cnf').checked,
                     fim: document.getElementById('p-fim').checked
                 },
+                warmupType: document.getElementById('warmup-type').value,
+                mainType: document.getElementById('main-type').value,
                 warmups: [],
                 mainDives: [],
                 comment: document.getElementById('form-comment').value
             };
 
-            // 웜업 배열 채우기
             for(let i=1; i<=3; i++) {
                 logData.warmups.push({
                     depth: document.getElementById(`wu-d-${i}`).value,
                     time: document.getElementById(`wu-t-${i}`).value
                 });
             }
-            // 본다이빙 배열 채우기
             for(let i=1; i<=8; i++) {
                 logData.mainDives.push({
                     depth: document.getElementById(`main-d-${i}`).value,
@@ -501,10 +495,11 @@
 
             const log = db[index];
             document.getElementById('form-title-input').value = log.title || '';
-            document.getElementById('form-date').value = log.date || '';
+            document.getElementById('form-date-input').value = log.date || '';
             document.getElementById('form-session-no').value = log.sessionNo || '';
             document.getElementById('form-location').value = log.location || '';
             document.getElementById('form-buddy').value = log.buddy || '';
+            document.getElementById('form-instructor').value = log.instructor || '';
 
             if(log.equipment) {
                 document.getElementById('eq-mask').checked = !!log.equipment.mask;
@@ -515,6 +510,7 @@
                 document.getElementById('eq-lanyard').checked = !!log.equipment.lanyard;
                 document.getElementById('eq-wetsuit').value = log.equipment.wetsuit || '';
                 document.getElementById('eq-weight').value = log.equipment.weight || '';
+                document.getElementById('eq-etc').value = log.equipment.etc || '';
             }
 
             if(log.conditions) {
@@ -532,6 +528,9 @@
                 document.getElementById('p-cnf').checked = !!log.purpose.cnf;
                 document.getElementById('p-fim').checked = !!log.purpose.fim;
             }
+
+            document.getElementById('warmup-type').value = log.warmupType || '';
+            document.getElementById('main-type').value = log.mainType || '';
 
             if(log.warmups) {
                 log.warmups.forEach((wu, i) => {
@@ -593,7 +592,6 @@
             reader.readAsText(file);
         }
 
-        // 초기 구동
         window.onload = function() {
             initFormFields();
             render();
