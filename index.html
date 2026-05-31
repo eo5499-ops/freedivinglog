@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!DOCTYPE html><html lang="ko">
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -198,7 +197,6 @@
         .session-row span { min-width: 40px; font-size: 0.85rem; color: var(--text-muted); }
         .session-row input { flex: 1; padding: 8px; font-size: 0.85rem; }
 
-        /* 모눈종이 노트 스타일 고정 및 공간 확보 */
         .grid-textarea {
             background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
             background-size: 24px 24px;
@@ -209,11 +207,10 @@
             font-size: 0.95rem !important;
             resize: none;
             background-attachment: local;
-            flex: 1; /* 모달 내부에서 남은 공간을 꽉 채우도록 설정 */
+            flex: 1;
             margin-bottom: 12px;
         }
 
-        /* 피드백 작성 전체화면 모달창 배치 개선 */
         .comment-modal {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background-color: var(--bg-color); z-index: 2000;
@@ -222,9 +219,8 @@
         .comment-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .modal-info-preview { background-color: #111827; border: 1px dashed var(--border); border-radius: 8px; padding: 10px; margin-bottom: 14px; font-size: 0.85rem; color: var(--text-muted); }
         
-        /* 모달 내 하단 버튼 전용 스타일 고정 */
         .modal-footer-btn {
-            flex: none !important; /* 무조건 한 줄 크기 고정 */
+            flex: none !important;
             width: 100% !important;
             height: 50px !important;
             font-size: 1rem !important;
@@ -267,11 +263,10 @@
             <input type="hidden" id="edit-index">
             <div class="form-group"><label>세션 제목</label><input type="text" id="form-title-input" placeholder="예: 안성 잠수풀 정기 트레이닝" required></div>
             <div class="form-group"><label>날짜</label><input type="date" id="form-date-input" required></div>
-            <div class="form-group"><label>세션 No.</label><input type="number" id="form-session-no"></div>
+            <div class="form-group"><label>세션 No.</label><input type="number" id="form-session-no" placeholder="숫자 입력"></div>
             <div class="form-group"><label>장소</label><input type="text" id="form-location" placeholder="K26, 용인 잠수풀 등"></div>
             <div class="form-group"><label>버디</label><input type="text" id="form-buddy" placeholder="버디 이름을 입력하세요"></div>
-            <div class="form-group"><label>강사</label><input type="text" id="form-instructor placeholder="강사 이름을 입력하세요></div>
-            
+            <div class="form-group"><label>강사</label><input type="text" id="form-instructor" placeholder="강사 이름을 입력하세요"></div>
             <div class="form-group">
                 <label>장비</label>
                 <div class="checkbox-grid">
@@ -287,10 +282,10 @@
                     <input type="text" id="eq-wetsuit" placeholder="슈트(mm)" style="flex:1;">
                     <input type="text" id="eq-weight" placeholder="웨이트(kg)" style="flex:1;">
                 </div>
-                <div style="margin-top: 10px;"><input type="text" id="eq-etc" placeholder="기타 장비 (etc) - 자유롭게 적어주세요"></div>
+                <div style="margin-top: 10px;"><input type="text" id="eq-etc" placeholder="기타 장비"></div>
             </div>
             <div class="form-group">
-                <label>CONDITIONS (환경)</label>
+                <label>환경</label>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
                     <input type="text" id="cond-weather" placeholder="날씨">
                     <input type="text" id="cond-surface" placeholder="파도">
@@ -300,6 +295,7 @@
                     <input type="text" id="cond-temp" placeholder="수온/기온">
                 </div>
             </div>
+
             <div class="form-group">
                 <label>목적</label>
                 <div class="checkbox-grid">
@@ -325,12 +321,10 @@
         </form>
     </div>
 
-    <!-- 피드백 작성 모달 영역 내부 레이아웃 전면 수정 -->
     <div id="comment-modal-window" class="comment-modal hidden">
         <div class="comment-modal-header"><h2 id="comment-modal-title">피드백 작성</h2><button class="close-modal-btn" onclick="closeCommentModal()">✕</button></div>
         <div class="modal-info-preview" id="modal-info-preview-box"></div>
         <textarea id="form-comment" class="grid-textarea" placeholder="여기에 세션 피드백을 기록하세요..."></textarea>
-        <!-- 기존 무조건 100% 늘어나던 구조에서 고정 크기를 갖도록 .modal-footer-btn 적용 -->
         <button type="button" class="btn-success modal-footer-btn" onclick="closeCommentModal()">작성 완료</button>
     </div>
 
@@ -423,6 +417,13 @@
                 location: document.getElementById('form-location').value,
                 buddy: document.getElementById('form-buddy').value, 
                 instructor: document.getElementById('form-instructor').value,
+                // [수정] CONDITIONS 데이터 추출 및 바인딩 로직 보완
+                conditions: {
+                    weather: document.getElementById('cond-weather').value,
+                    surface: document.getElementById('cond-surface').value,
+                    current: document.getElementById('cond-current').value,
+                    temp: document.getElementById('cond-temp').value
+                },
                 equipment: { 
                     mask: document.getElementById('eq-mask').checked, 
                     snorkel: document.getElementById('eq-snorkel').checked, 
@@ -434,12 +435,6 @@
                     wetsuit: document.getElementById('eq-wetsuit').value, 
                     weight: document.getElementById('eq-weight').value, 
                     etc: document.getElementById('eq-etc').value 
-                },
-                conditions: {
-                    weather: document.getElementById('cond-weather').value,
-                    surface: document.getElementById('cond-surface').value,
-                    current: document.getElementById('cond-current').value,
-                    temp: document.getElementById('cond-temp').value
                 },
                 purpose: { 
                     sta: document.getElementById('p-sta').checked, 
@@ -485,6 +480,19 @@
             document.getElementById('warmup-type').value = log.warmupType || '';
             document.getElementById('main-type').value = log.mainType || '';
 
+            // [수정] CONDITIONS 데이터 수정 시 인풋 폼으로 복원 로직 추가
+            if (log.conditions) {
+                document.getElementById('cond-weather').value = log.conditions.weather || '';
+                document.getElementById('cond-surface').value = log.conditions.surface || '';
+                document.getElementById('cond-current').value = log.conditions.current || '';
+                document.getElementById('cond-temp').value = log.conditions.temp || '';
+            } else {
+                document.getElementById('cond-weather').value = '';
+                document.getElementById('cond-surface').value = '';
+                document.getElementById('cond-current').value = '';
+                document.getElementById('cond-temp').value = '';
+            }
+
             if (log.equipment) {
                 document.getElementById('eq-mask').checked = !!log.equipment.mask;
                 document.getElementById('eq-snorkel').checked = !!log.equipment.snorkel;
@@ -496,12 +504,6 @@
                 document.getElementById('eq-wetsuit').value = log.equipment.wetsuit || '';
                 document.getElementById('eq-weight').value = log.equipment.weight || '';
                 document.getElementById('eq-etc').value = log.equipment.etc || '';
-            }
-            if(log.conditions) {
-                document.getElementById('cond-weather').value = log.conditions.weather || '';
-                document.getElementById('cond-surface').value = log.conditions.surface || '';
-                document.getElementById('cond-current').value = log.conditions.current || '';
-                document.getElementById('cond-temp').value = log.conditions.temp || '';
             }
 
             if (log.purpose) {
