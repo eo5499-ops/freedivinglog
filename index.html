@@ -135,17 +135,22 @@
         }
         
         /* 💡 모든 모바일 디바이스에서 인풋창 가로 폭이 튀어나오지 않도록 일괄 수정 */
-        input[type="text"], input[type="date"], input[type="number"], textarea, input {
-            width: 100% !important;
-            box-sizing: border-box !important;
-            max-width: 100% !important;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background-color: #0f172a;
-            color: var(--text-color);
-            font-size: 0.9rem;
-        }
+      input[type="text"], input[type="date"], input[type="number"], textarea, input {
+        -webkit-appearance: none;       /* ✅ 아이폰 특유의 둥근 버그 및 강제 디자인 삭제 */
+        -moz-appearance: none;          /* ✅ 파이어폭스 기본 디자인 삭제 */
+        appearance: none;               /* ✅ 표준 브라우저 기본 디자인 삭제 */
+        width: 100% !important;
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background-color: #0f172a;
+        color: var(--text-color);
+        font-size: 0.9rem;
+        display: block;                 /* ✅ 한 줄을 통째로 차지하도록 강제 정렬 */
+}
+        
 
         .checkbox-grid {
             display: grid;
