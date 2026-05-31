@@ -368,6 +368,30 @@
             document.getElementById('form-comment').value = log.comment || '';
             // ... (기타 데이터 불러오기 생략)
         }
+        function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            // 가져온 데이터가 배열인지 확인
+            if (Array.isArray(importedData)) {
+                db = importedData;
+                localStorage.setItem('freediving_db', JSON.stringify(db));
+                alert("데이터 가져오기 성공!");
+                render(); // 화면에 목록을 다시 그립니다.
+            } else {
+                alert("올바른 JSON 데이터 형식이 아닙니다.");
+            }
+        } catch (error) {
+            alert("파일을 읽는 중 오류가 발생했습니다.");
+            console.error(error);
+        }
+    };
+    reader.readAsText(file);
+}
 
         window.onload = () => { initFormFields(); render(); };
     </script>
