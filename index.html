@@ -245,7 +245,7 @@
             background-attachment: local;
         }
 
-        /* ✨ 코멘트 전용 전체 화면 모달 창 스타일 */
+        /* 코멘트 전용 전체 화면 모달 창 스타일 */
         .comment-modal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -259,12 +259,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--border);
         }
         .comment-modal-header h2 {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: var(--primary);
         }
         .close-modal-btn {
@@ -276,10 +276,29 @@
             padding: 4px 12px;
             cursor: pointer;
         }
+
+        /* ✨ 모달 내 상단 로그 정보 프리뷰 카드 스타일 */
+        .modal-info-preview {
+            background-color: #111827;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .modal-info-preview div {
+            margin-bottom: 2px;
+        }
+        .modal-info-preview strong {
+            color: var(--text-color);
+        }
+
         .comment-modal .grid-textarea {
-            flex: 1; /* 창 전체 높이를 채우도록 설정 */
+            flex: 1; /* 대시보드와 패널을 제외한 나머지 화면 전체를 모눈종이로 선언 */
             width: 100% !important;
             border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
         .hidden { display: none !important; }
@@ -407,7 +426,6 @@
                 <div id="main-inputs" style="max-height: 260px; overflow-y: auto; padding-right:4px;"></div>
             </div>
 
-            <!-- 기본 폼 안의 기존 COMMENT 영역은 숨김 처리하거나 간이 진입용으로 활용 가능 -->
             <div class="form-group">
                 <label>COMMENT (종합 피드백 모눈)</label>
                 <button type="button" class="btn-secondary" onclick="openCommentModal()" style="width:100%; border-radius:6px !important; padding:12px; font-size:0.9rem;">📝 전체화면 모눈노트 열기</button>
@@ -420,12 +438,15 @@
         </form>
     </div>
 
-    <!-- ✨ 전체 화면 코멘트 모달 창 추가 -->
     <div id="comment-modal-window" class="comment-modal hidden">
         <div class="comment-modal-header">
             <h2 id="comment-modal-title">종합 피드백 모눈노트</h2>
             <button type="button" class="close-modal-btn" onclick="closeCommentModal()">✕</button>
         </div>
+
+        <div class="modal-info-preview" id="modal-info-preview-box">
+            </div>
+
         <textarea id="form-comment" class="grid-textarea" placeholder="이퀄라이징 상태, 덕다이브 자세, 버디 시스템 피드백 등 오늘의 트레이닝 내용을 상세히 기록해 보세요..."></textarea>
         <button type="button" class="btn-success" onclick="closeCommentModal()" style="margin-top:12px; font-size:0.95rem; padding:12px;">작성 완료</button>
     </div>
@@ -484,7 +505,6 @@
                 
                 let commentPreviewHtml = '';
                 if (log.comment && log.comment.trim() !== '') {
-                    // ✨ 프리뷰 영역 클릭 시 바로 해당 로그의 코멘트 모달 창이 열리도록 변경
                     commentPreviewHtml = `<div class="log-comment-preview" onclick="openDirectComment(${index}, event)">${log.comment.replace(/\n/g, ' ')}</div>`;
                 } else {
                     commentPreviewHtml = `<div class="log-comment-preview" style="border-left-color:#475569; color:#64748b !important;" onclick="openDirectComment(${index}, event)">+ 작성된 코멘트가 없습니다. 탭하여 추가하세요.</div>`;
@@ -508,16 +528,30 @@
             });
         }
 
-        // ✨ 메인화면 프리뷰 클릭 시 다이렉트로 새창 모달 띄우기 전용 함수
         function openDirectComment(index, event) {
-            event.stopPropagation(); // 부모 리스트 클릭 이벤트 방지
-            editLog(index); // 폼 데이터 먼저 로드
-            openCommentModal(); // 곧바로 새창 노트 열기
+            event.stopPropagation();
+            editLog(index); 
+            openCommentModal(); 
         }
 
+        // ✨ 모달 창 열릴 때 인풋 박스 값을 읽어와 상단 프리뷰 카드를 그려주는 로직 구현
         function openCommentModal() {
-            const titleInput = document.getElementById('form-title-input').value;
-            document.getElementById('comment-modal-title').innerText = titleInput ? `📝 ${titleInput} - 피드백` : '📝 종합 피드백 모눈노트';
+            const title = document.getElementById('form-title-input').value || '이름 없음';
+            const date = document.getElementById('form-date-input').value || '날짜 미지정';
+            const location = document.getElementById('form-location').value || '장소 미지정';
+            const buddy = document.getElementById('form-buddy').value || '없음';
+
+            // 상단 타이틀 매핑
+            document.getElementById('comment-modal-title').innerText = `📝 피드백 작성`;
+
+            // 프리뷰 미니 대시보드 구조 동적 생성
+            const previewBox = document.getElementById('modal-info-preview-box');
+            previewBox.innerHTML = `
+                <div>📌 <strong>세션:</strong> ${title}</div>
+                <div>📅 <strong>일시/장소:</strong> ${date} — @${location}</div>
+                <div>👥 <strong>다이브 버디:</strong> ${buddy}</div>
+            `;
+
             document.getElementById('comment-modal-window').classList.remove('hidden');
         }
 
@@ -609,7 +643,6 @@
         }
 
         function editLog(index) {
-            // 새 창 오픈 시 기본 폼 활성화 로직 처리
             document.getElementById('edit-index').value = index;
             document.getElementById('form-title').innerText = `로그 수정 (No. ${db[index].sessionNo || index+1})`;
 
