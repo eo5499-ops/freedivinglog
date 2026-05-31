@@ -150,27 +150,38 @@
 }
         
 
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 6px;
-        }
-        .check-label {
-            display: flex;
-            align-items: center;
-            background-color: #0f172a;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-        .check-label input {
-            margin-right: 8px;
-            width: 16px;
-            height: 16px;
-        }
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 6px;
+}
+
+/* 💡 PC와 모바일 모두에서 체크박스 레이아웃을 나란히 정렬 */
+    .check-label {
+        display: flex !important;
+        align-items: center !important;  /* 체크박스와 글자 높낮이를 수평으로 딱 맞춤 */
+        gap: 8px !important;             /* 체크박스와 글자 사이 간격 벌리기 */
+        background-color: #0f172a;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        font-size: 0.85rem;
+        cursor: pointer;
+        box-sizing: border-box;
+}
+
+/* 💡 PC/모바일 전체에서 체크박스가 길쭉해지는 버그를 해결하는 핵심 코드 */
+    .check-label input[type="checkbox"] {
+        -webkit-appearance: checkbox !important; /* 모바일 강제 변형 해제 */
+        -moz-appearance: checkbox !important;
+        appearance: checkbox !important;
+        width: 18px !important;                  /* ⚠️ 가로폭 100%를 해제하고 18px로 고정 */
+        height: 18px !important;                 /* 세로 높이도 18px로 고정 */
+        max-width: 18px !important;
+        margin: 0 !important;                    /* 테두리 정렬 틀어지는 기본 여백 제거 */
+        flex-shrink: 0;                          /* 화면이 줄어들어도 네모가 찌그러지지 않음 */
+}
 
         .session-row {
             display: flex;
