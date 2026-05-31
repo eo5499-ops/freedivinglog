@@ -265,12 +265,12 @@
         <h2 id="form-title">기록 작성</h2>
         <form id="dive-form" onsubmit="saveLog(event)">
             <input type="hidden" id="edit-index">
-            <div class="form-group"><label>세션 제목</label><input type="text" id="form-title-input" required></div>
+            <div class="form-group"><label>세션 제목</label><input type="text" id="form-title-input" placeholder="예: 안성 잠수풀 정기 트레이닝" required></div>
             <div class="form-group"><label>날짜</label><input type="date" id="form-date-input" required></div>
             <div class="form-group"><label>세션 No.</label><input type="number" id="form-session-no"></div>
-            <div class="form-group"><label>장소</label><input type="text" id="form-location"></div>
-            <div class="form-group"><label>버디</label><input type="text" id="form-buddy"></div>
-            <div class="form-group"><label>강사</label><input type="text" id="form-instructor"></div>
+            <div class="form-group"><label>장소</label><input type="text" id="form-location" placeholder="K26, 용인 잠수풀 등"></div>
+            <div class="form-group"><label>버디</label><input type="text" id="form-buddy" placeholder="버디 이름을 입력하세요"></div>
+            <div class="form-group"><label>강사</label><input type="text" id="form-instructor placeholder="강사 이름을 입력하세요></div>
             
             <div class="form-group">
                 <label>장비</label>
@@ -287,9 +287,19 @@
                     <input type="text" id="eq-wetsuit" placeholder="슈트(mm)" style="flex:1;">
                     <input type="text" id="eq-weight" placeholder="웨이트(kg)" style="flex:1;">
                 </div>
-                <div style="margin-top: 10px;"><input type="text" id="eq-etc" placeholder="기타 장비"></div>
+                <div style="margin-top: 10px;"><input type="text" id="eq-etc" placeholder="기타 장비 (etc) - 자유롭게 적어주세요"></div>
             </div>
-
+            <div class="form-group">
+                <label>CONDITIONS (환경)</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
+                    <input type="text" id="cond-weather" placeholder="날씨">
+                    <input type="text" id="cond-surface" placeholder="파도">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                    <input type="text" id="cond-current" placeholder="조류">
+                    <input type="text" id="cond-temp" placeholder="수온/기온">
+                </div>
+            </div>
             <div class="form-group">
                 <label>목적</label>
                 <div class="checkbox-grid">
@@ -425,6 +435,12 @@
                     weight: document.getElementById('eq-weight').value, 
                     etc: document.getElementById('eq-etc').value 
                 },
+                conditions: {
+                    weather: document.getElementById('cond-weather').value,
+                    surface: document.getElementById('cond-surface').value,
+                    current: document.getElementById('cond-current').value,
+                    temp: document.getElementById('cond-temp').value
+                },
                 purpose: { 
                     sta: document.getElementById('p-sta').checked, 
                     dyn: document.getElementById('p-dyn').checked, 
@@ -480,6 +496,12 @@
                 document.getElementById('eq-wetsuit').value = log.equipment.wetsuit || '';
                 document.getElementById('eq-weight').value = log.equipment.weight || '';
                 document.getElementById('eq-etc').value = log.equipment.etc || '';
+            }
+            if(log.conditions) {
+                document.getElementById('cond-weather').value = log.conditions.weather || '';
+                document.getElementById('cond-surface').value = log.conditions.surface || '';
+                document.getElementById('cond-current').value = log.conditions.current || '';
+                document.getElementById('cond-temp').value = log.conditions.temp || '';
             }
 
             if (log.purpose) {
