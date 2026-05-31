@@ -75,22 +75,20 @@
 
         .btn-group {
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            gap: 8px;               /* 버튼 사이 간격을 살짝 좁혀서 공간 확보 */
+            justify-content: space-between;
+            width: 100%;
         }
 
         button {
-            flex: 1;
-            min-width: 100px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: none;
-            background-color: var(--primary);
-            color: #000;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s;
+            flex: 1;                /* 세 버튼이 정확히 1:1:1 비율로 공간을 나눠 가짐 */
+            white-space: nowrap;    /* ⚠️ 글자가 절대로 두 줄로 줄바꿈되지 않도록 강제 방지 */
+            font-size: 0.85rem;     /* 모바일 화면을 고려해 글자 크기를 살짝 조정 */
+            padding: 10px 4px;      /* 좌우 여백을 줄여서 글자가 잘리지 않게 방지 */
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         button:active { background-color: var(--primary-hover); }
