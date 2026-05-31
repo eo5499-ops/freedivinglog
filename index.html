@@ -303,13 +303,14 @@
             <!-- 세션 다이브 로그 (기록지) -->
             <div class="form-group">
                 <label>SESSION DIVE LOG (웜업 3회)</label>
-                <input type="text" id="종목" placeholder="종목을 넣어주세요">
+                <input type="text" id="warmup-type" placeholder="종목을 넣어주세요 (예: STA, DYN)">
+                <div id="warmup-inputs" style="margin-top: 12px;">
                 <div id="warmup-inputs">
                     <!-- 3회 고정 생성 -->
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-top: 35px;">
                 <label>SESSION DIVE LOG (본 다이빙 최대 8회)</label>
                 <input type="text" id="종목" placeholder="종목을 넣어주세요">
                 <div id="main-inputs" style="max-height: 260px; overflow-y: auto; padding-right:4px;">
