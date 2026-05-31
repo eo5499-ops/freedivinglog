@@ -469,6 +469,7 @@
                     wetsuit: document.getElementById('eq-wetsuit').value,
                     weight: document.getElementById('eq-weight').value,
                     etc: document.getElementById('eq-etc').value
+                    watch: document.getElementById('eq-watch').value
                 },
                 conditions: {
                     weather: document.getElementById('cond-weather').value,
@@ -537,6 +538,7 @@
                 document.getElementById('eq-lanyard').checked = !!log.equipment.lanyard;
                 document.getElementById('eq-wetsuit').value = log.equipment.wetsuit || '';
                 document.getElementById('eq-weight').value = log.equipment.weight || '';
+                document.getElementById('eq-watch').checked = !!log.equipment.watch;
                 document.getElementById('eq-etc').value = log.equipment.etc || '';
             }
 
