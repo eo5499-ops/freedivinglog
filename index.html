@@ -1,3 +1,13 @@
+전체 HTML 코드를 주신 덕분에 원인이 정확하게 보였습니다!
+
+그동안 고쳐지지 않았던 이유는 범용 인풋 스타일을 지정한 규칙 중 textarea, input { width: 100% !important; ... } 이라는 부분이 있었기 때문입니다. 여기서 input 태그 전체를 100%로 강제해 버리는 바람에, 우리가 아래쪽에 .check-label input[type="checkbox"] 스타일을 열심히 적어주었어도 공통 input 속성이 우선순위를 빼앗아 체크박스 가로길이를 화면 끝까지 늘려버린 것이었습니다.
+
+PC와 모바일 양쪽 모두에서 체크박스가 깔끔한 네모로 돌아오고, 글자와 수평이 완벽하게 맞도록 스타일 코드(style 태그 내부)를 깔끔하게 정돈한 전체 소스코드를 드립니다.
+
+기존 코드를 이 코드로 전체 선택(Ctrl + A) 후 덮어씌우기(Ctrl + V) 해주시면 깔끔하게 해결됩니다!
+
+💻 버그가 수정된 전체 HTML 코드
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -75,20 +85,26 @@
 
         .btn-group {
             display: flex;
-            gap: 8px;               /* 버튼 사이 간격을 살짝 좁혀서 공간 확보 */
+            gap: 8px;
             justify-content: space-between;
             width: 100%;
         }
 
         button {
-            flex: 1;                /* 세 버튼이 정확히 1:1:1 비율로 공간을 나눠 가짐 */
-            white-space: nowrap;    /* ⚠️ 글자가 절대로 두 줄로 줄바꿈되지 않도록 강제 방지 */
-            font-size: 0.85rem;     /* 모바일 화면을 고려해 글자 크기를 살짝 조정 */
-            padding: 10px 4px;      /* 좌우 여백을 줄여서 글자가 잘리지 않게 방지 */
+            flex: 1;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            padding: 10px 4px;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 500;
         }
 
         button:active { background-color: var(--primary-hover); }
@@ -132,56 +148,58 @@
             margin-bottom: 4px;
         }
         
-        /* 💡 모든 모바일 디바이스에서 인풋창 가로 폭이 튀어나오지 않도록 일괄 수정 */
-      input[type="text"], input[type="date"], input[type="number"], textarea, input {
-        -webkit-appearance: none;       /* ✅ 아이폰 특유의 둥근 버그 및 강제 디자인 삭제 */
-        -moz-appearance: none;          /* ✅ 파이어폭스 기본 디자인 삭제 */
-        appearance: none;               /* ✅ 표준 브라우저 기본 디자인 삭제 */
-        width: 100% !important;
-        box-sizing: border-box !important;
-        max-width: 100% !important;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        background-color: #0f172a;
-        color: var(--text-color);
-        font-size: 0.9rem;
-        display: block;                 /* ✅ 한 줄을 통째로 차지하도록 강제 정렬 */
-}
+        /* 💡 텍스트 타입 인풋에만 가로폭 100%를 주도록 안전하게 수정 (체크박스 침범 방지) */
+        input[type="text"], input[type="date"], input[type="number"], textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: #0f172a;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            display: block;
+        }
         
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 6px;
+        }
 
-    .checkbox-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        margin-top: 6px;
-}
+        /* 💡 PC와 모바일 모두에서 체크박스 레이아웃을 정렬 */
+        .check-label {
+            display: flex !important;
+            align-items: center !important;  /* 체크박스와 글자 높낮이 수평 맞춤 */
+            gap: 10px !important;            /* 체크박스와 글자 사이 간격 벌리기 */
+            background-color: #0f172a;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-sizing: border-box;
+            width: 100%;
+        }
 
-/* 💡 PC와 모바일 모두에서 체크박스 레이아웃을 나란히 정렬 */
-    .check-label {
-        display: flex !important;
-        align-items: center !important;  /* 체크박스와 글자 높낮이를 수평으로 딱 맞춤 */
-        gap: 8px !important;             /* 체크박스와 글자 사이 간격 벌리기 */
-        background-color: #0f172a;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        font-size: 0.85rem;
-        cursor: pointer;
-        box-sizing: border-box;
-}
-
-/* 💡 PC/모바일 전체에서 체크박스가 길쭉해지는 버그를 해결하는 핵심 코드 */
-    .check-label input[type="checkbox"] {
-        -webkit-appearance: checkbox !important; /* 모바일 강제 변형 해제 */
-        -moz-appearance: checkbox !important;
-        appearance: checkbox !important;
-        width: 18px !important;                  /* ⚠️ 가로폭 100%를 해제하고 18px로 고정 */
-        height: 18px !important;                 /* 세로 높이도 18px로 고정 */
-        max-width: 18px !important;
-        margin: 0 !important;                    /* 테두리 정렬 틀어지는 기본 여백 제거 */
-        flex-shrink: 0;                          /* 화면이 줄어들어도 네모가 찌그러지지 않음 */
-}
+        /* 💡 길쭉해지는 현상을 완전히 방지하는 고정 스타일 정의 */
+        .check-label input[type="checkbox"] {
+            -webkit-appearance: checkbox !important; 
+            -moz-appearance: checkbox !important;
+            appearance: checkbox !important;
+            width: 18px !important;                  /* 크기 18px로 완전 고정 */
+            height: 18px !important;
+            max-width: 18px !important;
+            min-width: 18px !important;
+            margin: 0 !important;                    /* 기본 바깥 여백 초기화 */
+            flex-shrink: 0 !important;               /* 화면 좁아져도 찌그러짐 방지 */
+            cursor: pointer;
+        }
 
         .session-row {
             display: flex;
@@ -229,8 +247,7 @@
 
     <div class="card" id="log-list-card">
         <h2>로그 데이터베이스</h2>
-        <div id="log-list-container">
-            </div>
+        <div id="log-list-container"></div>
     </div>
 
     <div class="card hidden" id="log-form-card">
@@ -315,8 +332,7 @@
                 
                 <div style="height: 15px;"></div>
                 
-                <div id="warmup-inputs">
-                    </div>
+                <div id="warmup-inputs"></div>
             </div>
 
             <div style="height: 40px;"></div>
@@ -327,8 +343,7 @@
                 
                 <div style="height: 15px;"></div>
                 
-                <div id="main-inputs" style="max-height: 260px; overflow-y: auto; padding-right:4px;">
-                    </div>
+                <div id="main-inputs" style="max-height: 260px; overflow-y: auto; padding-right:4px;"></div>
             </div>
 
             <div class="form-group">
@@ -336,9 +351,9 @@
                 <textarea id="form-comment" rows="6" class="grid-textarea" placeholder="이퀄라이징 컨디션이나 자세 교정 내용을 적어보세요..."></textarea>
             </div>
 
-            <div class="btn-group" style="margin-top:16px;">
-                <button type="submit" class="btn-success">로그 저장하기</button>
-                <button type="button" class="btn-secondary" onclick="closeForm()" style="width:100%; margin-top:6px; padding:12px; font-size:1rem;">취소</button>
+            <div class="btn-group" style="margin-top:16px; display:flex; flex-direction:column; gap:6px;">
+                <button type="submit" class="btn-success" style="width:100%; margin-top:0;">로그 저장하기</button>
+                <button type="button" class="btn-secondary" onclick="closeForm()" style="width:100%; margin-top:0; padding:12px; font-size:1rem;">취소</button>
             </div>
         </form>
     </div>
@@ -346,7 +361,6 @@
     <script>
         let db = [];
 
-        // 초기 인풋 창 바인딩 및 동적 생성
         function initFormFields() {
             const wuContainer = document.getElementById('warmup-inputs');
             wuContainer.innerHTML = '';
@@ -371,12 +385,10 @@
             }
         }
 
-        // 데이터 로드 및 갱신
         function render() {
             const data = localStorage.getItem('freediving_db');
             db = data ? JSON.parse(data) : [];
             
-            // 통계 업뎃
             document.getElementById('stat-count').innerText = `총 다이빙 횟수: ${db.length}회`;
             let maxPb = 0;
             db.forEach(log => {
@@ -386,7 +398,6 @@
             });
             document.getElementById('stat-pb').innerText = `최대 수심 (PB): ${maxPb}m`;
 
-            // 목록 렌더링
             const container = document.getElementById('log-list-container');
             container.innerHTML = '';
 
@@ -420,10 +431,7 @@
             document.getElementById('dive-form').reset();
             document.getElementById('edit-index').value = '';
             document.getElementById('form-title').innerText = '새 다이빙 기록 작성';
-            
-            // 오늘 날짜 기본 지정
             document.getElementById('form-date-input').value = new Date().toISOString().substring(0, 10);
-            
             document.getElementById('log-form-card').classList.remove('hidden');
             document.getElementById('log-list-card').classList.add('hidden');
             window.scrollTo({ top: document.getElementById('log-form-card').offsetTop - 20, behavior: 'smooth' });
@@ -438,7 +446,6 @@
             e.preventDefault();
             const index = document.getElementById('edit-index').value;
 
-            // 데이터 수집 객체 빌드 (새 항목인 instructor 및 eqEtc 자바스크립트 매핑 완료)
             const logData = {
                 title: document.getElementById('form-title-input').value,
                 date: document.getElementById('form-date-input').value,
